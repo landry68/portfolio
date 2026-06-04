@@ -1,0 +1,32 @@
+Shema Landry
+Frontend Developer & Designer
+
+Contact
+Email: shemalandry@gmail.com
+Location: Kigali, Rwanda
+GitHub: github.com/shemalendry
+Instagram: instagram.com/shemalendry
+LinkedIn: linkedin.com/in/shemalendry
+
+Summary
+I build responsive web experiences using Vue.js, HTML, CSS, and JavaScript. I focus on practical design, clean code, and fast-loading interfaces.
+
+Skills
+- Vue.js
+- JavaScript (ES6+)
+- HTML5 & CSS3
+- Responsive Design
+- UI/UX Design
+- Git & GitHub
+
+Experience
+- Built reusable UI components and responsive landing pages.
+- Developed dashboard interfaces and web applications with local storage and API integration.
+- Designed portfolio sites and project presentations with clear visual hierarchy.
+
+Education
+- Technical Diploma in Web & IT — SOS Technical High School
+- A-Level Secondary — IFAK Secondary School
+
+Availability
+Available for freelance and full-time opportunities.

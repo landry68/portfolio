@@ -5,13 +5,20 @@
       <div class="nav-inner">
         <span class="nav-logo">SL</span>
         <ul class="nav-links">
-          <li><a href="#home" @click.prevent="scrollTo('home')">Home</a></li>
-          <li><a href="#about" @click.prevent="scrollTo('about')">About</a></li>
-          <li><a href="#skills" @click.prevent="scrollTo('skills')">Skills</a></li>
-          <li><a href="#projects" @click.prevent="scrollTo('projects')">Projects</a></li>
-          <li><a href="#education" @click.prevent="scrollTo('education')">Education</a></li>
-          <li><a href="#contact" @click.prevent="scrollTo('contact')">Contact</a></li>
+          <li v-for="link in text.navLinks" :key="link.id">
+            <a :href="'#'+link.id" @click.prevent="scrollTo(link.id)">{{ link.label }}</a>
+          </li>
         </ul>
+        <div class="nav-actions">
+          <button class="theme-toggle" @click="toggleDarkMode">
+            {{ darkMode ? text.lightMode : text.darkMode }}
+          </button>
+          <select class="lang-select" v-model="currentLanguage" aria-label="Language">
+            <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+              {{ lang.label }}
+            </option>
+          </select>
+        </div>
         <button class="hamburger" @click="menuOpen = !menuOpen">☰</button>
       </div>
       <div class="mobile-menu" v-if="menuOpen">
@@ -25,27 +32,26 @@
       <div class="hero-content">
         <div class="hero-headline">
           <div class="hero-text-block">
-            <p class="hero-greeting">Hello, I'm</p>
-            <h1 class="hero-name">Shema Landry</h1>
+            <p class="hero-greeting">{{ text.hero.greeting }}</p>
+            <h1 class="hero-name">{{ text.hero.name }}</h1>
             <div class="hero-title">
               <span class="typing-text">{{ displayedTitle }}</span><span class="cursor">|</span>
             </div>
           </div>
           <div class="profile-wrap">
             <div class="profile-circle">
-              <img src="/src/assets/bb.jpg" alt="Shema Landry" class="profile-pic" />
+              <img src="/src/assets/pere.png" alt="Shema Landry" class="profile-pic" />
               <div class="profile-initials">SL</div>
             </div>
             <div class="profile-ring"></div>
           </div>
         </div>
         <p class="hero-tagline">
-          I build websites and apps that actually work.<br>
-          No fluff, just solid design and code.
+          {{ text.hero.tagline }}
         </p>
         <div class="hero-cta">
-          <button class="btn-primary" @click="scrollTo('projects')">View My Work</button>
-          <button class="btn-outline" @click="scrollTo('contact')">Let's Talk</button>
+          <button class="btn-primary" @click="scrollTo('projects')">{{ text.hero.cta.work }}</button>
+          <button class="btn-outline" @click="scrollTo('contact')">{{ text.hero.cta.chat }}</button>
         </div>
         <div class="hero-scroll-hint" @click="scrollTo('about')">
           <span>Scroll to explore</span>
@@ -59,21 +65,13 @@
     <!-- ABOUT -->
     <section id="about" class="section about-section">
       <div class="section-inner">
-        <div class="section-label">01 — About Me</div>
+        <div class="section-label">{{ text.sections.aboutLabel }}</div>
         <div class="about-grid">
           <div class="about-text">
-            <h2 class="section-heading">Building things<br><em>that actually work</em></h2>
-            <p>
-              I'm a developer and designer from Rwanda. I like building things that work well and don't waste your time.
-              Good design shouldn't be complicated — it should just make sense.
-            </p>
-            <p>
-              Started learning code out of curiosity, now it's what I do. I enjoy figuring out how to solve problems with code,
-              and making interfaces that people don't hate using. Pretty straightforward stuff.
-            </p>
-            <p>
-              Outside of work, I'm probably experimenting with something, reading about design, or just learning whatever looks interesting.
-            </p>
+            <h2 class="section-heading">{{ text.sections.aboutHeading }}<br><em>{{ text.sections.aboutEmphasis }}</em></h2>
+            <p>{{ text.about.paragraphs[0] }}</p>
+            <p>{{ text.about.paragraphs[1] }}</p>
+            <p>{{ text.about.paragraphs[2] }}</p>
             <div class="about-stats">
               <div class="stat">
                 <span class="stat-num">3+</span>
@@ -93,7 +91,7 @@
             <div class="about-card">
               <div class="card-ink-border"></div>
               <div class="about-avatar-large">
-                <img src="/src/assets/bb.jpg" alt="Shema Landry" class="about-profile-pic" />
+                <img src="/src/assets/pere.png" alt="Shema Landry" class="about-profile-pic" />
                 <div class="avatar-text">SL</div>
               </div>
               <div class="about-card-info">
@@ -111,10 +109,10 @@
     <!-- SKILLS -->
     <section id="skills" class="section skills-section">
       <div class="section-inner">
-        <div class="section-label">02 — Skills & Tools</div>
-        <h2 class="section-heading">What I work with</h2>
+        <div class="section-label">{{ text.sections.skillsLabel }}</div>
+        <h2 class="section-heading">{{ text.sections.skillsHeading }}</h2>
         <div class="skills-grid">
-          <div class="skill-category" v-for="cat in skillCategories" :key="cat.title">
+          <div class="skill-category" v-for="cat in skillCategoriesTranslated" :key="cat.title">
             <div class="skill-cat-icon">{{ cat.icon }}</div>
             <h3 class="skill-cat-title">{{ cat.title }}</h3>
             <div class="skill-list">
@@ -136,8 +134,17 @@
     <!-- PROJECTS -->
     <section id="projects" class="section projects-section">
       <div class="section-inner">
-        <div class="section-label">03 — Projects</div>
-        <h2 class="section-heading">Things I've built</h2>
+            <div class="section-label">{{ text.sections.projectsLabel }}</div>
+        <h2 class="section-heading">{{ text.sections.projectsHeading }}</h2>
+        <div class="project-showcase">
+          <h3 class="showcase-title">{{ text.projectImagesTitle }}</h3>
+          <div class="showcase-grid">
+            <div class="showcase-item" v-for="img in projectImages" :key="img.src">
+              <img :src="img.src" :alt="img.alt" />
+              <p>{{ img.caption }}</p>
+            </div>
+          </div>
+        </div>
         <div class="projects-grid">
           <div class="project-card" v-for="(proj, i) in projects" :key="i" @mouseenter="proj.hovered=true" @mouseleave="proj.hovered=false">
             <div class="project-num">{{ String(i+1).padStart(2,'0') }}</div>
@@ -161,8 +168,8 @@
     <!-- EDUCATION -->
     <section id="education" class="section education-section">
       <div class="section-inner">
-        <div class="section-label">04 — Education</div>
-        <h2 class="section-heading">My academic journey</h2>
+        <div class="section-label">{{ text.sections.educationLabel }}</div>
+        <h2 class="section-heading">{{ text.sections.educationHeading }}</h2>
         <div class="timeline">
           <div class="timeline-item" v-for="(edu, i) in education" :key="i">
             <div class="timeline-dot"></div>
@@ -184,58 +191,66 @@
     <!-- CONTACT -->
     <section id="contact" class="section contact-section">
       <div class="section-inner">
-        <div class="section-label">05 — Contact</div>
-        <h2 class="section-heading">Let's build<br><em>something real</em></h2>
-        <p class="contact-sub">
-          Got a project or just want to chat? Drop me a message. I'm always open to interesting work.
-        </p>
+        <div class="section-label">{{ text.sections.contactLabel }}</div>
+        <h2 class="section-heading">{{ text.sections.contactHeading }}<br><em>{{ text.sections.contactEmphasis }}</em></h2>
+        <p class="contact-sub">{{ text.sections.contactSub }}</p>
         <div class="contact-grid">
           <div class="contact-form-wrap">
             <div class="contact-form">
               <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" v-model="form.name" placeholder="John Doe" />
+                <label>{{ text.form.name }}</label>
+                <input type="text" v-model="form.name" :placeholder="text.form.placeholders.name" />
               </div>
               <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" v-model="form.email" placeholder="john@example.com" />
+                <label>{{ text.form.email }}</label>
+                <input type="email" v-model="form.email" :placeholder="text.form.placeholders.email" />
               </div>
               <div class="form-group">
-                <label>Message</label>
-                <textarea v-model="form.message" placeholder="Tell me about your project..." rows="5"></textarea>
+                <label>{{ text.form.message }}</label>
+                <textarea v-model="form.message" :placeholder="text.form.placeholders.message" rows="5"></textarea>
               </div>
               <button class="btn-primary full" @click="submitForm">
-                {{ formSent ? '✓ Message Sent!' : 'Send Message' }}
+                {{ formSent ? text.contact.sent : text.contact.send }}
               </button>
+              <a :href="cvLink" download="ShemaLandry_CV.txt" class="btn-secondary full">
+                {{ text.contact.downloadCV }}
+              </a>
             </div>
           </div>
           <div class="contact-info">
             <div class="contact-block">
-              <div class="contact-icon">✉</div>
+              <div class="contact-icon"></div>
               <div>
-                <p class="ci-label">Email</p>
+                <p class="ci-label">{{ text.contact.emailLabel }}</p>
                 <p class="ci-val">shemalandry@gmail.com</p>
               </div>
             </div>
             <div class="contact-block">
               <div class="contact-icon"></div>
               <div>
-                <p class="ci-label">Location</p>
+                <p class="ci-label">{{ text.contact.locationLabel }}</p>
                 <p class="ci-val">Kigali, Rwanda</p>
               </div>
             </div>
             <div class="contact-block">
               <div class="contact-icon"></div>
               <div>
-                <p class="ci-label">LinkedIn</p>
-                <p class="ci-val">linkedin.com/in/shemalendry</p>
+                <p class="ci-label">{{ text.contact.linkedinLabel }}</p>
+                <a class="ci-val contact-link" :href="text.contact.linkedinUrl" target="_blank">{{ text.contact.linkedinHandle }}</a>
               </div>
             </div>
             <div class="contact-block">
               <div class="contact-icon"></div>
               <div>
-                <p class="ci-label">GitHub</p>
-                <p class="ci-val">github.com/shemalendry</p>
+                <p class="ci-label">{{ text.contact.githubLabel }}</p>
+                <a class="ci-val contact-link" :href="text.contact.githubUrl" target="_blank">{{ text.contact.githubHandle }}</a>
+              </div>
+            </div>
+            <div class="contact-block">
+              <div class="contact-icon"></div>
+              <div>
+                <p class="ci-label">{{ text.contact.instagramLabel }}</p>
+                <a class="ci-val contact-link" :href="text.contact.instagramUrl" target="_blank">{{ text.contact.instagramHandle }}</a>
               </div>
             </div>
           </div>
@@ -247,14 +262,18 @@
     <footer class="footer">
       <div class="footer-inner">
         <span class="footer-name">Shema Landry</span>
-        <span class="footer-copy">© {{ new Date().getFullYear() }} — Crafted with care & coffee ☕</span>
-        <span class="footer-back" @click="scrollTo('home')">Back to top ↑</span>
+        <span class="footer-copy">© {{ new Date().getFullYear() }} — {{ text.footer }}</span>
+        <span class="footer-back" @click="scrollTo('home')">{{ text.footerBack }}</span>
       </div>
     </footer>
   </div>
 </template>
 
 <script>
+import asset1 from './assets/1.png'
+import asset2 from './assets/2.png'
+import asset3 from './assets/3.png'
+
 export default {
   name: 'App',
   data() {
@@ -263,21 +282,26 @@ export default {
       menuOpen: false,
       formSent: false,
       form: { name: '', email: '', message: '' },
+      darkMode: false,
+      currentLanguage: 'en',
+      languages: [
+        { code: 'en', label: 'English' },
+        { code: 'fr', label: 'Français' },
+      ],
       navLinks: [
-        { id: 'home', label: 'Home' },
-        { id: 'about', label: 'About' },
-        { id: 'skills', label: 'Skills' },
-        { id: 'projects', label: 'Projects' },
-        { id: 'education', label: 'Education' },
-        { id: 'contact', label: 'Contact' },
+        { id: 'home' },
+        { id: 'about' },
+        { id: 'skills' },
+        { id: 'projects' },
+        { id: 'education' },
+        { id: 'contact' },
       ],
-      titles: [
-        'Vue.js Developer',
-        'UI/UX Designer',
-        'Frontend Engineer',
-        'JavaScript Enthusiast',
-        'Digital Craftsman',
+      projectImages: [
+        { src: asset1, alt: 'Project screenshot 1', caption: 'Project interface sample' },
+        { src: asset2, alt: 'Project screenshot 2', caption: 'Design and style preview' },
+        { src: asset3, alt: 'Project screenshot 3', caption: 'Tools and workflow snapshot' },
       ],
+      cvLink: '/ShemaLandry_CV.txt',
       currentTitleIndex: 0,
       displayedTitle: '',
       typingForward: true,
@@ -314,89 +338,378 @@ export default {
           ],
         },
       ],
-      projects: [
+      projectData: [
         {
           icon: '',
-          title: 'E-Commerce Platform',
-          desc: 'Built a shopping site with Vue 3. Has a cart, product filters, and checkout that actually works. Made it mobile-friendly too.',
           tags: ['Vue.js', 'JavaScript', 'CSS Grid'],
           hovered: false,
-          links: { demo: '#', github: '#' },
+          links: { demo: '#', github: 'https://github.com/shemalendry' },
         },
         {
           icon: '',
-          title: 'Analytics Dashboard',
-          desc: 'Dashboard that shows real data with charts. You can switch between dark and light mode. Keeps things readable even with lots of info.',
           tags: ['Vue.js', 'Chart.js', 'REST API'],
           hovered: false,
-          links: { demo: '#', github: '#' },
+          links: { demo: '#', github: 'https://github.com/shemalendry' },
         },
         {
           icon: '',
-          title: 'Component Library',
-          desc: 'Made a set of reusable UI components — buttons, cards, forms, layouts. Just copy and use them in your project.',
           tags: ['HTML5', 'CSS3', 'JavaScript'],
           hovered: false,
-          links: { github: '#' },
+          links: { github: 'https://github.com/shemalendry' },
         },
         {
           icon: '',
-          title: 'Blog Platform',
-          desc: 'Simple blog where you can write, edit, and organize posts. Supports markdown. Everything saves to local storage.',
           tags: ['Vue.js', 'Markdown', 'LocalStorage'],
           hovered: false,
-          links: { demo: '#', github: '#' },
+          links: { demo: '#', github: 'https://github.com/shemalendry' },
         },
         {
           icon: '',
-          title: 'Business Landing Page',
-          desc: 'Fast loading site for a local business. SEO-friendly and designed to actually convert visitors into customers.',
           tags: ['HTML', 'CSS', 'JavaScript'],
           hovered: false,
           links: { demo: '#' },
         },
         {
           icon: '',
-          title: 'Task Manager',
-          desc: 'Drag-and-drop boards to organize tasks. Add priorities and due dates. Actually useful for daily work.',
           tags: ['Vue.js', 'LocalStorage', 'CSS'],
           hovered: false,
-          links: { demo: '#', github: '#' },
+          links: { demo: '#', github: 'https://github.com/shemalendry' },
         },
       ],
-      education: [
-        {
-          badge: '',
-          period: 'Technical Training',
-          school: 'SOS Technical High School',
-          level: 'Technical Diploma — Web & IT',
-          desc: 'Specialized in web technologies, networking fundamentals, and software development. Built my first real web projects here and discovered my passion for the craft.',
-        },
-        {
-          badge: '',
-          period: 'A-Level Secondary',
-          school: 'IFAK Secondary School',
-          level: 'Advanced Level (A-Level)',
-          desc: 'Completed Advanced Level studies with a focus on Mathematics, Computer Science, and Sciences — developing the analytical thinking that powers my development approach today.',
-        },
-        {
-          badge: '',
-          period: 'O-Level Secondary',
-          school: 'St. Joseph Secondary School',
-          level: 'Ordinary Level (O-Level)',
-          desc: 'Built a solid academic foundation across all core subjects. Discovered early interest in technology, logic, and problem-solving that would shape my career path.',
-        },
-        {
-          badge: '',
-          period: 'Primary Education',
-          school: 'St. Joseph Primary School',
-          level: 'Primary Education',
-          desc: 'Where curiosity began. A nurturing environment that encouraged creativity, discipline, and a love for learning that I carry to this day.',
-        },
+      educationData: [
+        { badge: '01' },
+        { badge: '02' },
+        { badge: '03' },
+        { badge: '04' },
       ],
+      translations: {
+        en: {
+          navLinks: [
+            { id: 'home', label: 'Home' },
+            { id: 'about', label: 'About' },
+            { id: 'skills', label: 'Skills' },
+            { id: 'projects', label: 'Projects' },
+            { id: 'education', label: 'Education' },
+            { id: 'contact', label: 'Contact' },
+          ],
+          titles: [
+            'Vue.js Developer',
+            'UI/UX Designer',
+            'Frontend Engineer',
+            'JavaScript Enthusiast',
+            'Digital Craftsman',
+          ],
+          hero: {
+            greeting: 'Hello, I\'m',
+            name: 'Shema Landry',
+            tagline: 'I build websites and apps that actually work. No fluff, just solid design and code.',
+            cta: { work: 'View My Work', chat: 'Let\'s Talk' },
+          },
+          sections: {
+            aboutLabel: '01 — About Me',
+            aboutHeading: 'Building things',
+            aboutEmphasis: 'that actually work',
+            skillsLabel: '02 — Skills & Tools',
+            skillsHeading: 'What I work with',
+            projectsLabel: '03 — Projects',
+            projectsHeading: 'Things I\'ve built',
+            educationLabel: '04 — Education',
+            educationHeading: 'My academic journey',
+            contactLabel: '05 — Contact',
+            contactHeading: 'Let\'s build',
+            contactEmphasis: 'something real',
+            contactSub: 'Got a project or just want to chat? Drop me a message.',
+          },
+          about: {
+            paragraphs: [
+              'I\'m a developer and designer from Rwanda. I like building things that work well and don\'t waste your time. Good design shouldn\'t be complicated — it should just make sense.',
+              'Started learning code out of curiosity, now it\'s what I do. I enjoy figuring out how to solve problems with code, and making interfaces that people don\'t hate using.',
+              'Outside of work, I\'m probably experimenting with something, reading about design, or just learning whatever looks interesting.',
+            ],
+          },
+          projectImagesTitle: 'Project previews',
+          projects: [
+            {
+              title: 'E-Commerce Platform',
+              desc: 'Built a shopping site with Vue 3. Has a cart, filters, and checkout that actually works, plus mobile-friendly pages.',
+              tags: ['Vue.js', 'JavaScript', 'CSS Grid'],
+            },
+            {
+              title: 'Analytics Dashboard',
+              desc: 'Dashboard showing real data with charts, filters, and a clean layout. Designed for people who need fast insights.',
+              tags: ['Vue.js', 'Chart.js', 'REST API'],
+            },
+            {
+              title: 'Component Library',
+              desc: 'Reusable UI components for buttons, cards, forms, and layouts. Easy to drop into any project and customize.',
+              tags: ['HTML5', 'CSS3', 'JavaScript'],
+            },
+            {
+              title: 'Blog Platform',
+              desc: 'A simple blog where you can write, edit, and organize posts. Supports markdown and saves content locally.',
+              tags: ['Vue.js', 'Markdown', 'LocalStorage'],
+            },
+            {
+              title: 'Business Landing Page',
+              desc: 'Fast-loading landing page for a business that looks polished, converts visitors, and works on mobile.',
+              tags: ['HTML', 'CSS', 'JavaScript'],
+            },
+            {
+              title: 'Task Manager',
+              desc: 'A task board with priorities and drag-friendly cards. Built to help organize work and stay on track.',
+              tags: ['Vue.js', 'LocalStorage', 'CSS'],
+            },
+          ],
+          skillCategories: [
+            { title: 'Frontend Development' },
+            { title: 'Design' },
+            { title: 'Tools & Workflow' },
+          ],
+          education: [
+            {
+              period: 'Technical Training',
+              school: 'SOS Technical High School',
+              level: 'Technical Diploma — Web & IT',
+              desc: 'Specialized in web technologies, networking fundamentals, and software development. Built first real web projects here.',
+            },
+            {
+              period: 'A-Level Secondary',
+              school: 'IFAK Secondary School',
+              level: 'Advanced Level (A-Level)',
+              desc: 'Focused on Mathematics, Computer Science, and Sciences to develop analytical thinking and problem solving.',
+            },
+            {
+              period: 'O-Level Secondary',
+              school: 'St. Joseph Secondary School',
+              level: 'Ordinary Level (O-Level)',
+              desc: 'Built a solid academic foundation across core subjects and discovered early interest in technology.',
+            },
+            {
+              period: 'Primary Education',
+              school: 'St. Joseph Primary School',
+              level: 'Primary Education',
+              desc: 'A nurturing learning environment where curiosity and creativity began.',
+            },
+          ],
+          form: {
+            name: 'Your Name',
+            email: 'Email Address',
+            message: 'Message',
+            placeholders: {
+              name: 'John Doe',
+              email: 'john@example.com',
+              message: 'Tell me about your project...',
+            },
+          },
+          contact: {
+            send: 'Send Message',
+            sent: 'Message Sent!',
+            downloadCV: 'Download CV',
+            emailLabel: 'Email',
+            locationLabel: 'Location',
+            linkedinLabel: 'LinkedIn',
+            githubLabel: 'GitHub',
+            instagramLabel: 'Instagram',
+            githubHandle: 'github.com/shemalendry',
+            githubUrl: 'https://github.com/shemalendry',
+            instagramHandle: 'instagram.com/shemalendry',
+            instagramUrl: 'https://instagram.com/shemalendry',
+            linkedinHandle: 'linkedin.com/in/shemalendry',
+            linkedinUrl: 'https://linkedin.com/in/shemalendry',
+          },
+          footer: 'Crafted with care',
+          footerBack: 'Back to top ↑',
+          darkMode: 'Dark Mode',
+          lightMode: 'Light Mode',
+        },
+        fr: {
+          navLinks: [
+            { id: 'home', label: 'Accueil' },
+            { id: 'about', label: 'À propos' },
+            { id: 'skills', label: 'Compétences' },
+            { id: 'projects', label: 'Projets' },
+            { id: 'education', label: 'Éducation' },
+            { id: 'contact', label: 'Contact' },
+          ],
+          titles: [
+            'Développeur Vue.js',
+            'Designer UI/UX',
+            'Ingénieur Frontend',
+            'Passionné JavaScript',
+            'Artisan numérique',
+          ],
+          hero: {
+            greeting: 'Bonjour, je suis',
+            name: 'Shema Landry',
+            tagline: 'Je crée des sites et applications qui fonctionnent vraiment. Sans blabla, juste du design et du code solides.',
+            cta: { work: 'Voir mes projets', chat: 'Discutons' },
+          },
+          sections: {
+            aboutLabel: '01 — À propos',
+            aboutHeading: 'Créer des choses',
+            aboutEmphasis: 'qui fonctionnent vraiment',
+            skillsLabel: '02 — Compétences & Outils',
+            skillsHeading: 'Ce que je maîtrise',
+            projectsLabel: '03 — Projets',
+            projectsHeading: 'Ce que j\'ai réalisé',
+            educationLabel: '04 — Éducation',
+            educationHeading: 'Mon parcours',
+            contactLabel: '05 — Contact',
+            contactHeading: 'Construisons',
+            contactEmphasis: 'quelque chose de réel',
+            contactSub: 'Vous avez un projet ou envie de discuter ? Envoyez-moi un message.',
+          },
+          about: {
+            paragraphs: [
+              'Je suis développeur et designer au Rwanda. J\'aime créer des solutions qui fonctionnent bien et ne font pas perdre de temps. Un bon design doit rester simple.',
+              'J\'ai commencé à apprendre le code par curiosité, aujourd\'hui c\'est mon métier. J\'aime résoudre des problèmes avec du code et créer des interfaces agréables à utiliser.',
+              'En dehors du travail, je teste souvent de nouvelles idées, je lis sur le design, ou j\'apprends quelque chose de nouveau.',
+            ],
+          },
+          projectImagesTitle: 'Aperçu des projets',
+          projects: [
+            {
+              title: 'Plateforme e-commerce',
+              desc: 'Site de vente en ligne avec Vue 3 : panier, filtres et paiement. Conçu pour être mobile et facile à utiliser.',
+              tags: ['Vue.js', 'JavaScript', 'CSS Grid'],
+            },
+            {
+              title: 'Tableau de bord analytique',
+              desc: 'Tableau de bord avec graphiques et données. Clair, réactif et pensé pour des décisions rapides.',
+              tags: ['Vue.js', 'Chart.js', 'REST API'],
+            },
+            {
+              title: 'Bibliothèque de composants',
+              desc: 'Ensemble de composants réutilisables : boutons, cartes, formulaires et mises en page.',
+              tags: ['HTML5', 'CSS3', 'JavaScript'],
+            },
+            {
+              title: 'Plateforme de blog',
+              desc: 'Blog simple pour écrire, modifier et organiser des articles. Supporte le markdown et stocke localement.',
+              tags: ['Vue.js', 'Markdown', 'LocalStorage'],
+            },
+            {
+              title: 'Page d\'atterrissage',
+              desc: 'Page rapide pour une entreprise, optimisée pour le mobile et l\' expérience utilisateur.',
+              tags: ['HTML', 'CSS', 'JavaScript'],
+            },
+            {
+              title: 'Gestionnaire de tâches',
+              desc: 'Tableau de tâches avec priorités et cartes. Conçu pour organiser le travail quotidien.',
+              tags: ['Vue.js', 'LocalStorage', 'CSS'],
+            },
+          ],
+          skillCategories: [
+            { title: 'Développement Frontend' },
+            { title: 'Design' },
+            { title: 'Outils & Workflow' },
+          ],
+          education: [
+            {
+              period: 'Formation technique',
+              school: 'SOS Technical High School',
+              level: 'Diplôme technique — Web & IT',
+              desc: 'Formation en technologies web, réseau et développement logiciel.',
+            },
+            {
+              period: 'Secondaire A-Level',
+              school: 'IFAK Secondary School',
+              level: 'A-Level avancé',
+              desc: 'Études axées sur mathématiques, informatique et sciences.',
+            },
+            {
+              period: 'Secondaire O-Level',
+              school: 'St. Joseph Secondary School',
+              level: 'O-Level',
+              desc: 'Base académique solide et première découverte de la technologie.',
+            },
+            {
+              period: 'École primaire',
+              school: 'St. Joseph Primary School',
+              level: 'Éducation primaire',
+              desc: 'Début de la curiosité et de l\'envie d\'apprendre.',
+            },
+          ],
+          form: {
+            name: 'Votre nom',
+            email: 'Adresse e-mail',
+            message: 'Message',
+            placeholders: {
+              name: 'Jean Dupont',
+              email: 'jean@example.com',
+              message: 'Parlez-moi de votre projet...',
+            },
+          },
+          contact: {
+            send: 'Envoyer',
+            sent: 'Message envoyé !',
+            downloadCV: 'Télécharger le CV',
+            emailLabel: 'E-mail',
+            locationLabel: 'Localisation',
+            linkedinLabel: 'LinkedIn',
+            githubLabel: 'GitHub',
+            instagramLabel: 'Instagram',
+            githubHandle: 'github.com/shemalendry',
+            githubUrl: 'https://github.com/shemalendry',
+            instagramHandle: 'instagram.com/shemalendry',
+            instagramUrl: 'https://instagram.com/shemalendry',
+            linkedinHandle: 'linkedin.com/in/shemalendry',
+            linkedinUrl: 'https://linkedin.com/in/shemalendry',
+          },
+          footer: 'Conçu avec soin',
+          footerBack: 'Retour en haut ↑',
+          darkMode: 'Mode sombre',
+          lightMode: 'Mode clair',
+        },
+      },
     }
   },
+  computed: {
+    text() {
+      return this.translations[this.currentLanguage]
+    },
+    navItems() {
+      return this.text.navLinks
+    },
+    currentTitles() {
+      return this.text.titles
+    },
+    projects() {
+      return this.projectData.map((proj, index) => ({
+        ...proj,
+        ...this.text.projects[index],
+      }))
+    },
+    education() {
+      return this.educationData.map((item, index) => ({
+        ...item,
+        ...this.text.education[index],
+      }))
+    },
+    skillCategoriesTranslated() {
+      return this.skillCategories.map((cat, index) => ({
+        ...cat,
+        title: this.text.skillCategories[index].title,
+      }))
+    },
+  },
+  watch: {
+    darkMode(newVal) {
+      localStorage.setItem('portfolioDarkMode', newVal)
+      document.body.classList.toggle('dark', newVal)
+    },
+    currentLanguage(newVal) {
+      localStorage.setItem('portfolioLanguage', newVal)
+    },
+  },
   mounted() {
+    const storedLang = localStorage.getItem('portfolioLanguage')
+    if (storedLang && this.languages.some(lang => lang.code === storedLang)) {
+      this.currentLanguage = storedLang
+    }
+    const storedDark = localStorage.getItem('portfolioDarkMode')
+    this.darkMode = storedDark === 'true'
+    document.body.classList.toggle('dark', this.darkMode)
     window.addEventListener('scroll', this.handleScroll)
     this.startTyping()
   },
@@ -413,7 +726,7 @@ export default {
     },
     startTyping() {
       const type = () => {
-        const current = this.titles[this.currentTitleIndex]
+        const current = this.currentTitles[this.currentTitleIndex]
         if (this.typingForward) {
           if (this.typingIndex < current.length) {
             this.displayedTitle = current.slice(0, ++this.typingIndex)
@@ -426,13 +739,16 @@ export default {
             this.displayedTitle = current.slice(0, --this.typingIndex)
             setTimeout(type, 40)
           } else {
-            this.currentTitleIndex = (this.currentTitleIndex + 1) % this.titles.length
+            this.currentTitleIndex = (this.currentTitleIndex + 1) % this.currentTitles.length
             this.typingForward = true
             setTimeout(type, 300)
           }
         }
       }
       type()
+    },
+    toggleDarkMode() {
+      this.darkMode = !this.darkMode
     },
     submitForm() {
       if (!this.form.name || !this.form.email || !this.form.message) return
@@ -468,6 +784,21 @@ export default {
   --shadow: rgba(44, 31, 14, 0.12);
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'Josefin Sans', sans-serif;
+}
+
+body.dark {
+  --parchment: #090b11;
+  --parchment-dark: #0b1220;
+  --parchment-mid: #111827;
+  --ink: #f8fafc;
+  --ink-light: #cbd5e1;
+  --ink-faint: #94a3b8;
+  --accent: #60a5fa;
+  --accent-warm: #38bdf8;
+  --gold: #facc15;
+  --gold-light: #fde047;
+  --cream: #111827;
+  --shadow: rgba(0, 0, 0, 0.35);
 }
 
 html { scroll-behavior: smooth; }
@@ -511,6 +842,25 @@ body::before {
   box-shadow: 0 2px 20px var(--shadow);
   border-bottom: 1px solid var(--parchment-dark);
 }
+body.dark .navbar.scrolled {
+  background: rgba(15, 23, 42, 0.96);
+  border-bottom-color: rgba(148, 163, 184, 0.22);
+}
+body.dark .navbar {
+  color: var(--cream);
+}
+body.dark .nav-links a {
+  color: var(--ink-light);
+}
+body.dark .nav-links a:hover {
+  color: var(--accent);
+}
+body.dark .theme-toggle,
+body.dark .lang-select {
+  background: rgba(255,255,255,0.08);
+  color: var(--cream);
+  border-color: rgba(148, 163, 184, 0.3);
+}
 .nav-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -530,6 +880,32 @@ body::before {
   display: flex;
   list-style: none;
   gap: 36px;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.theme-toggle,
+.lang-select {
+  border: 1px solid var(--parchment-dark);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  background: var(--cream);
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+.theme-toggle {
+  cursor: pointer;
+}
+.theme-toggle:hover,
+.lang-select:hover {
+  border-color: var(--accent);
+}
+.lang-select {
+  cursor: pointer;
 }
 .nav-links a {
   font-family: var(--font-body);
@@ -776,6 +1152,34 @@ body::before {
   box-shadow: 0 4px 18px rgba(139,69,19,0.25);
   position: relative;
   overflow: hidden;
+}
+.btn-secondary {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 14px 34px;
+  background: transparent;
+  color: var(--parchment);
+  border: 1.5px solid rgba(245,237,224,0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--gold-light);
+}
+body.dark .btn-secondary {
+  color: var(--cream);
+  border: 1.5px solid rgba(245,237,224,0.5);
+}
+body.dark .btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--accent);
 }
 .btn-primary::before {
   content: '';
@@ -1166,12 +1570,17 @@ body::before {
 
 /* ─── CONTACT ─── */
 .contact-section {
-  background:
-    linear-gradient(160deg, var(--ink) 0%, #3d2a15 100%);
+  background: linear-gradient(160deg, var(--ink) 0%, #3d2a15 100%);
   color: var(--parchment);
 }
+body.dark .contact-section {
+  background: linear-gradient(160deg, #0f172a 0%, #111827 100%);
+  color: var(--cream);
+}
 .contact-section .section-label { color: var(--gold-light); }
+body.dark .contact-section .section-label { color: var(--gold-light); }
 .contact-section .section-heading { color: var(--parchment); }
+body.dark .contact-section .section-heading { color: var(--parchment); }
 .contact-sub {
   color: rgba(245,237,224,0.65);
   font-size: 0.95rem;
@@ -1180,6 +1589,46 @@ body::before {
   margin-bottom: 56px;
   line-height: 1.8;
 }
+body.dark .contact-sub {
+  color: rgba(255,255,255,0.8);
+}
+.form-group label {
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(245,237,224,0.55);
+}
+body.dark .form-group label {
+  color: rgba(245,237,224,0.55);
+}
+.form-group input,
+.form-group textarea {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 13px 16px;
+  background: rgba(245,237,224,0.06);
+  border: 1px solid rgba(245,237,224,0.15);
+  color: var(--parchment);
+  outline: none;
+  transition: border-color 0.3s;
+  resize: vertical;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: rgba(245,237,224,0.3); }
+.form-group input:focus,
+.form-group textarea:focus { border-color: var(--gold-light); }
+body.dark .form-group input,
+body.dark .form-group textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--parchment);
+}
+body.dark .form-group input::placeholder,
+body.dark .form-group textarea::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+body.dark .form-group input:focus,
+body.dark .form-group textarea:focus { border-color: var(--gold-light); }
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -1200,6 +1649,9 @@ body::before {
   font-size: 0.72rem;
   letter-spacing: 2px;
   text-transform: uppercase;
+  color: var(--ink-faint);
+}
+body.dark .form-group label {
   color: rgba(245,237,224,0.55);
 }
 .form-group input,
@@ -1207,17 +1659,27 @@ body::before {
   font-family: var(--font-body);
   font-size: 0.9rem;
   padding: 13px 16px;
-  background: rgba(245,237,224,0.06);
-  border: 1px solid rgba(245,237,224,0.15);
-  color: var(--parchment);
+  background: rgba(139,107,74,0.03);
+  border: 1px solid var(--parchment-dark);
+  color: var(--ink);
   outline: none;
   transition: border-color 0.3s;
   resize: vertical;
 }
 .form-group input::placeholder,
-.form-group textarea::placeholder { color: rgba(245,237,224,0.3); }
+.form-group textarea::placeholder { color: var(--ink-faint); }
 .form-group input:focus,
-.form-group textarea:focus { border-color: var(--gold-light); }
+.form-group textarea:focus { border-color: var(--accent); }
+body.dark .form-group input,
+body.dark .form-group textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--parchment);
+}
+body.dark .form-group input::placeholder,
+body.dark .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
+body.dark .form-group input:focus,
+body.dark .form-group textarea:focus { border-color: var(--gold-light); }
 
 .contact-info {
   display: flex;
@@ -1241,6 +1703,10 @@ body::before {
   justify-content: center;
   flex-shrink: 0;
 }
+body.dark .contact-icon {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+}
 .ci-label {
   font-size: 0.68rem;
   letter-spacing: 2px;
@@ -1248,10 +1714,16 @@ body::before {
   color: rgba(245,237,224,0.45);
   margin-bottom: 2px;
 }
+body.dark .ci-label {
+  color: rgba(245,237,224,0.45);
+}
 .ci-val {
   font-size: 0.9rem;
   color: rgba(245,237,224,0.8);
   font-weight: 300;
+}
+body.dark .ci-val {
+  color: rgba(245,237,224,0.8);
 }
 
 /* ─── FOOTER ─── */
@@ -1298,6 +1770,46 @@ body::before {
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+.project-showcase {
+  margin-bottom: 40px;
+}
+.showcase-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.showcase-item {
+  background: var(--cream);
+  border: 1px solid var(--parchment-dark);
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 14px 35px rgba(0,0,0,0.08);
+}
+.showcase-item img {
+  width: 100%;
+  border-radius: 14px;
+  object-fit: cover;
+  min-height: 180px;
+}
+.showcase-item p {
+  margin-top: 14px;
+  color: var(--ink-light);
+  font-size: 0.92rem;
+}
+.contact-link {
+  color: inherit;
+  text-decoration: none;
+  word-break: break-all;
+}
+.contact-link:hover {
+  color: var(--accent);
 }
 @keyframes pulse {
   0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
